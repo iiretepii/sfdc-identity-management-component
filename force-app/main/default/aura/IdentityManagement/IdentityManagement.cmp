@@ -1,0 +1,119 @@
+<aura:component controller="IdentityManagementController" implements="forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes">
+   <!--Declare Attributes-->  
+   <aura:attribute name="ListOfSessions" type="AuthSessionWrapper[]" />
+   <aura:attribute name="selectedCount" type="integer" default="0"/>
+   
+   <!--aura init handler , call js "loadSessionList" function on component load, and display contact data on table-->      
+   <aura:handler name="init" value="{!this}" action="{!c.loadSessionList}"/>
+    
+
+   <!--Header part-->
+   <div class="slds-page-header">
+      <p class="slds-page-header__title slds-truncate" title="">Active Sessions</p>
+      <span class="slds-badge">Number Selected: {!v.selectedCount}</span>
+      <div class="slds-grid slds-grid--align-end">
+          <button class="slds-button slds-button--brand" onclick="{!c.deleteSelected}">Revoke Session(s)</button>
+       </div>
+   </div>
+   <!--sessions table part--> 
+   <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+      <thead>
+         <tr class="slds-text-title--caps">
+			<!-- 1 -->
+            <th style="width:3.25rem;" class="slds-text-align--right">
+               <div class="slds-form-element">
+                  <div class="slds-form-element__control">
+                     <label class="slds-checkbox">
+                        <!--header checkbox for select all-->
+                        <ui:inputCheckbox aura:id="box3" change="{!c.selectAll}"/>
+                        <span class="slds-checkbox--faux"></span>
+                        <span class="slds-form-element__label text"></span>
+                     </label>
+                  </div>
+               </div>
+            </th>
+             <!-- 2 -->
+            <th>
+               <span class="slds-truncate" title="Created Date">Created Date</span>      
+            </th>
+             <!-- 3 -->
+            <th>
+               <span class="slds-truncate" title="Current Session">Current Session</span>
+            </th>
+             <!-- 4 -->
+            <th>       
+               <span class="slds-truncate" title="Operating System">Device Type</span>
+            </th>
+             <!-- 5 -->
+            <th>       
+               <span class="slds-truncate" title="Operating System">Platform Type</span>
+            </th>
+             <!-- 6 -->
+            <th>       
+               <span class="slds-truncate" title="Operating System">Browser Type</span>
+            </th>
+         </tr>
+      </thead>
+      <tbody>
+         <aura:iteration items="{!v.ListOfSessions}" var="session">
+            <tr>
+                <!-- 1 -->
+               <td scope="row" class="slds-text-align--right" style="width:3.25rem;">
+                  <div class="slds-form-element">
+                     <div class="slds-form-element__control">
+                        <label class="slds-checkbox">
+							<ui:inputCheckbox text="{!session.authSesh.Id}" aura:id="boxPack" value="" change="{!c.checkboxSelect}"/>
+                           	<span class="slds-checkbox--faux"></span>
+                           	<span class="slds-form-element__label text"></span>
+                        </label>
+                     </div>
+                  </div>
+               </td>
+                <!-- 2 -->
+               <td scope="row">
+                  <div class="slds-truncate" title="{!session.authSesh.CreatedDate}">
+                      <lightning:formattedDateTime value="{!session.authSesh.CreatedDate}" 
+                                                   weekday="short"
+                                                   year="numeric"
+                                                   month="numeric"
+                                                   day="numeric"
+                                                   hour="2-digit"
+                                                   minute="2-digit"
+                                                   timeZoneName="short"
+                                                   hour12="true"/>
+                      </div>
+               </td>
+                <!-- 3 -->
+               <td scope="row">
+                  <div class="slds-truncate" title="{!session.isCurrent}">
+                      {!if(session.isCurrent, '&#9989;', '')}
+                   </div>
+               </td>
+                <!-- 4 -->
+               <td scope="row">
+                  <div class="slds-truncate" title="{!session.ud.DeviceNativeUid}">
+                      {!session.ud.DeviceType}
+                   </div>
+               </td>
+                <!-- 5 -->
+               <td scope="row">
+                   <div class="slds-truncate" title="{!session.authSesh.LoginHistory.Platform}">
+                       {!session.authSesh.LoginHistory.Platform}
+                   </div>
+               </td>
+                <!-- 6 -->
+               <td scope="row">
+                   <div class="slds-truncate" title="{!session.authSesh.LoginHistory.Browser}">
+                       {!session.authSesh.LoginHistory.Browser}
+                   </div>
+               </td>
+               <!--<td scope="row">
+                  <div class="slds-truncate" title="{!session.authSesh.LoginGeo.City + ', ' + session.authSesh.LoginGeo.Country}">
+                      {!session.authSesh.LoginGeo.City + ', ' + session.authSesh.LoginGeo.Country}
+                  </div>
+               </td>-->
+            </tr>
+         </aura:iteration>
+      </tbody>
+   </table>
+</aura:component>
